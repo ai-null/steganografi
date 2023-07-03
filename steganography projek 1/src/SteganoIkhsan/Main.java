@@ -14,7 +14,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import SteganoIkhsan.Coding;
+import SteganoIkhsan.Engine;
+import java.util.HashSet;
+import javax.swing.filechooser.FileFilter;
  
  
 public class Main extends javax.swing.JFrame {
@@ -23,7 +25,7 @@ public class Main extends javax.swing.JFrame {
     File dirGambarKom;
     String sPath= "";
     String sName ="";
-    Coding vig;
+    Engine encoderEngine;
     /**
      * Creates new form UserInterface
      */
@@ -32,7 +34,7 @@ public class Main extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         txtGambar.setText("");
         txtTeks.setText("");
-        vig = new Coding();
+        encoderEngine = new Engine();
     }
 
     /**
@@ -390,7 +392,7 @@ public class Main extends javax.swing.JFrame {
             model = new Steganografi();
             String cipher = model.decode(sPath, sName);
             //di sini masih bug
-            if(cipher != ""){
+            if(!cipher.isEmpty()){
                 System.out.println("ciphertext :\n" + cipher);
                 JOptionPane.showMessageDialog(null, "Ekstrak Pesan Berhasil!\n"
                         + "Pesan di simpan pada " + sPath + "\\" + txtFileNama.getText() + ".txt", "Success",
@@ -402,10 +404,10 @@ public class Main extends javax.swing.JFrame {
                 psn = cipher;
             }else{
                 String file = sPath + "/"+txtFileNama.getText()+".txt";
-                vig.setPath(file);
+                encoderEngine.setPath(file);
                 try {
 //                    vig.Dekrip(cipher, key);
-                psn = vig.Dekrip(cipher, key);
+                psn = encoderEngine.Dekrip(cipher, key);
                 } catch (IOException ex) {
                     System.out.println("Gagal");
                 }
@@ -425,7 +427,7 @@ public class Main extends javax.swing.JFrame {
             if(txtKunci.getText().equals("")){
                 //do Nothing
             }else
-            pesan = new Coding().Enkrip(pesan, txtKunci.getText());
+            pesan = new Engine().Enkrip(pesan, txtKunci.getText());
             File directory = dirGambarKom;
             try{
                 model = new Steganografi();
@@ -465,12 +467,20 @@ public class Main extends javax.swing.JFrame {
     private void btnTeksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTeksActionPerformed
         // TODO add your handling code here:
         String dir1 = null;
+        String pesan = null;
         JFileChooser jfc = new JFileChooser("./");
         jfc.showOpenDialog(null);
         try{
-            jfc.addChoosableFileFilter(new FileNameExtensionFilter("text file", ".txt"));
+            FileFilter pdfFilter = new FileNameExtensionFilter("pdf file", "pdf");
+            jfc.addChoosableFileFilter(pdfFilter);
+            jfc.setFileFilter(pdfFilter);
+            jfc.setAcceptAllFileFilterUsed(false);
+            
+            PDFManager pdfManager = new PDFManager();   
             File file = jfc.getSelectedFile();
             String dir = file.getAbsolutePath();
+            
+            pesan = pdfManager.pdftoText(dir);
             dir1=dir;
             txtTeks.setText(dir);
         }catch(Exception E){
@@ -488,14 +498,14 @@ public class Main extends javax.swing.JFrame {
                 System.out.println("Gagal!!!");
             }
 
-            String st;
-            try {
-                while ((st = br.readLine()) != null){
-                    pesan += st+"\n";
-                }
-            } catch (IOException ex) {
-                System.out.println("Gagal!!!");
-            }
+//            String st;
+//            try {
+//                while ((st = br.readLine()) != null){
+//                    pesan += st+"\n";
+//                }
+//            } catch (IOException ex) {
+//                System.out.println("Gagal!!!");
+//            }
             System.out.println("Plainteks :\n " + pesan );
         }
     }//GEN-LAST:event_btnTeksActionPerformed

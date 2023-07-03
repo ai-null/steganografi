@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 
-public class Coding {
+public class Engine {
     String path;
     int[] aKey = null;
     int[] aPlain = null;

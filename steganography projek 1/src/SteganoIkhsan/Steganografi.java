@@ -15,6 +15,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.DataBufferByte;
+import java.nio.charset.StandardCharsets;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
@@ -37,8 +38,10 @@ public class Steganografi {
 	byte[] decode;
 	try{
             BufferedImage image  = user_space(getImage(image_path(path,name,"png")));
-            decode = decode_text(get_byte_data(image));
-            return(new String(decode));
+            byte[] iki = get_byte_data(image);
+            decode = decode_text(iki);
+            String anu = new String(decode, StandardCharsets.UTF_8);
+            return anu;
 	}catch(Exception e){
             JOptionPane.showMessageDialog(null,
                     "There is no hidden message in this image!","Error",
@@ -100,7 +103,8 @@ public class Steganografi {
     private byte[] get_byte_data(BufferedImage image){
 	WritableRaster raster = image.getRaster();
 	DataBufferByte buffer = (DataBufferByte)raster.getDataBuffer();
-        return buffer.getData();
+        byte[] anu = buffer.getData();
+        return anu;
     }
 
     private byte[] bit_conversion(int i){
